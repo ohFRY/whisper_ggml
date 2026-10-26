@@ -35,6 +35,11 @@ abstract class TranscribeRequestDto
 
     /// n_max_text_ctx override; null keeps whisper.cpp's default.
     @JsonKey(name: 'max_context') int? maxContext,
+
+    /// Repeat initial_prompt in every 30 s window.
+    @JsonKey(name: 'carry_initial_prompt')
+    @Default(false)
+    bool carryInitialPrompt,
     @JsonKey(name: 'suppress_non_speech_tokens')
     @Default(false)
     bool suppressNonSpeechTokens,
@@ -75,6 +80,7 @@ abstract class TranscribeRequestDto
       initialPrompt: request.initialPrompt,
       noContext: request.noContext,
       maxContext: request.maxContext,
+      carryInitialPrompt: request.carryInitialPrompt,
       suppressNonSpeechTokens: request.suppressNonSpeechTokens,
       progressCallback: progressCallbackAddress,
       keepModelLoaded: request.keepModelLoaded,

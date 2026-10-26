@@ -1,3 +1,7 @@
+## Unreleased (ohFRY fork)
+
+* Opt-in `carryInitialPrompt` for `transcribe` (controller and low-level API): sets whisper.cpp's `carry_initial_prompt` (CLI `--carry-initial-prompt`), so `initialPrompt` precedes every 30-second window instead of only the first and its vocabulary (names, jargon) still applies late in long recordings. Off by default; implemented in all three native shims
+
 ## 2.8.1
 
 * Fixed the iOS podspec overriding the host app's build settings ([#32](https://github.com/sk3llo/whisper_ggml/issues/32)): it declared `IPHONEOS_DEPLOYMENT_TARGET = 15.6` and `CLANG_CXX_LANGUAGE_STANDARD = c++20` in `s.xcconfig`, which CocoaPods applies to the app's `Pods-Runner` xcconfig as well as to the plugin. On iOS that xcconfig outranks project-level build settings, and Flutter's template sets the deployment target at the project level. An app targeting iOS 16 or later this way was built for 15.6 and failed to compile wherever it called iOS 16 APIs without `#available` checks. Both settings now apply only to the plugin's own target, which still builds for iOS 15.6 with C++20. Thanks @TechupBusiness for the report and the suggested fix

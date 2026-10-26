@@ -110,6 +110,10 @@ class WhisperController {
   /// [maxContext] bounds how much earlier text conditions each following
   /// 30-second window; `0` stops a hallucinated phrase from repeating
   /// across a long recording — see [TranscribeRequest.maxContext].
+  ///
+  /// [carryInitialPrompt] keeps [initialPrompt] in front of every 30-second
+  /// window, so its vocabulary still applies late in a long recording —
+  /// see [TranscribeRequest.carryInitialPrompt].
   Future<TranscribeResult?> transcribe({
     required WhisperModel model,
     required String audioPath,
@@ -118,6 +122,7 @@ class WhisperController {
     String? initialPrompt,
     bool noContext = false,
     int? maxContext,
+    bool carryInitialPrompt = false,
     bool suppressNonSpeechTokens = false,
     bool withSegments = false,
     bool splitOnWord = false,
@@ -145,6 +150,7 @@ class WhisperController {
           initialPrompt: initialPrompt,
           noContext: noContext,
           maxContext: maxContext,
+          carryInitialPrompt: carryInitialPrompt,
           suppressNonSpeechTokens: suppressNonSpeechTokens,
           keepModelLoaded: keepModelLoaded,
           vadModelPath: vadModelPath,

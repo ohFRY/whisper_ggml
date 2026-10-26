@@ -61,6 +61,22 @@ abstract class TranscribeRequest with _$TranscribeRequest {
     /// (16384, i.e. bounded only by the model's text context).
     @Default(null) int? maxContext,
 
+    /// Sets `whisper_full_params.carry_initial_prompt` on the native side
+    /// (whisper.cpp CLI `--carry-initial-prompt`).
+    ///
+    /// By default [initialPrompt] only precedes the first 30-second window;
+    /// later windows are conditioned on the text decoded so far, so on a
+    /// long recording the prompt's vocabulary (names, jargon) stops having
+    /// an effect after a minute or two. When `true`, whisper.cpp puts the
+    /// prompt in front of every window and fills the rest of the prompt
+    /// budget (half the model's text context, 224 tokens for the standard
+    /// models) with the most recent decoded text. A long prompt therefore
+    /// leaves little room for that text: keep it well under the budget.
+    ///
+    /// No effect without [initialPrompt]. Default `false` keeps the
+    /// behaviour of every previous version of this package.
+    @Default(false) bool carryInitialPrompt,
+
     /// Sets `whisper_full_params.suppress_non_speech_tokens` on the
     /// native side.
     ///

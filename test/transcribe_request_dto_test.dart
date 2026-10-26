@@ -170,5 +170,27 @@ void main() {
         expect(body['max_context'], maxContext);
       }
     });
+
+    test('carry_initial_prompt is false by default and forwards true', () {
+      final defaultDto = TranscribeRequestDto.fromTranscribeRequest(
+        request(),
+        '/tmp/model.bin',
+      );
+      final defaultBody =
+          json.decode(defaultDto.toRequestString()) as Map<String, dynamic>;
+      expect(defaultBody['carry_initial_prompt'], isFalse);
+
+      final dto = TranscribeRequestDto.fromTranscribeRequest(
+        TranscribeRequest(
+          audio: '/tmp/audio.wav',
+          initialPrompt: 'Nolwa-Petrine, Yso.',
+          carryInitialPrompt: true,
+        ),
+        '/tmp/model.bin',
+      );
+      final body = json.decode(dto.toRequestString()) as Map<String, dynamic>;
+      expect(body['carry_initial_prompt'], isTrue);
+      expect(body['initial_prompt'], 'Nolwa-Petrine, Yso.');
+    });
   });
 }
