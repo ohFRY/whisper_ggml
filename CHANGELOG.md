@@ -1,6 +1,7 @@
 ## Unreleased (ohFRY fork)
 
 * Opt-in `carryInitialPrompt` for `transcribe` (controller and low-level API): sets whisper.cpp's `carry_initial_prompt` (CLI `--carry-initial-prompt`), so `initialPrompt` precedes every 30-second window instead of only the first and its vocabulary (names, jargon) still applies late in long recordings. Off by default; implemented in all three native shims
+* Opt-in `initialContext` for `transcribe`, with `carryInitialPrompt`: text that precedes only the first 30-second window, after the carried prompt (for example the text a recording continues), then gives way to the decoded text. Adds `initial_context` to the bundled whisper.cpp's `whisper_full_params`, which seeds its rolling context
 
 ## 2.8.1
 

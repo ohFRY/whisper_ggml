@@ -5960,6 +5960,7 @@ struct whisper_full_params whisper_full_default_params(enum whisper_sampling_str
 
         /*.initial_prompt       =*/ nullptr,
         /*.carry_initial_prompt =*/ false,
+        /*.initial_context      =*/ nullptr,
         /*.prompt_tokens        =*/ nullptr,
         /*.prompt_n_tokens      =*/ 0,
 
@@ -6960,6 +6961,20 @@ int whisper_full_with_state(
                     prompt_past1.push_back(params.prompt_tokens[i]);
                 }
                 std::rotate(prompt_past1.begin(), prompt_past1.end() - params.prompt_n_tokens, prompt_past1.end());
+            }
+        }
+
+        // seed the rolling context: it follows the carried prompt in the first window only, and
+        // the decoded text replaces it (prompt_past1 is rebuilt after every window with carry on)
+        if (params.carry_initial_prompt && params.initial_context && params.initial_context[0] != '\0') {
+            std::vector<whisper_token> context_tokens(1024);
+            int n_needed = whisper_tokenize(ctx, params.initial_context, context_tokens.data(), context_tokens.size());
+            if (n_needed < 0) {
+                context_tokens.resize(-n_needed);
+                n_needed = whisper_tokenize(ctx, params.initial_context, context_tokens.data(), context_tokens.size());
+            }
+            if (n_needed > 0) {
+                prompt_past1.insert(prompt_past1.end(), context_tokens.begin(), context_tokens.begin() + n_needed);
             }
         }
     }

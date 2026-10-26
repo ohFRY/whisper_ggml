@@ -142,6 +142,9 @@ struct whisper_params
     // whisper_full_params.carry_initial_prompt: repeat initial_prompt in
     // every 30 s window instead of only the first.
     bool carry_initial_prompt = false;
+    // whisper_full_params.initial_context: text before the first window
+    // only, after the carried initial_prompt. Needs carry_initial_prompt.
+    std::string context;
     // whisper_full_params.no_context: drop decoded text left on the context
     // by an earlier whisper_full() call. Within one call, carry-over between
     // windows is bounded by max_context (n_max_text_ctx) instead.
@@ -255,6 +258,10 @@ json transcribe(json jsonBody)
     if (jsonBody.contains("carry_initial_prompt") && jsonBody["carry_initial_prompt"].is_boolean())
     {
         params.carry_initial_prompt = jsonBody["carry_initial_prompt"].get<bool>();
+    }
+    if (jsonBody.contains("initial_context") && jsonBody["initial_context"].is_string())
+    {
+        params.context = jsonBody["initial_context"].get<std::string>();
     }
     if (jsonBody.contains("max_context") && jsonBody["max_context"].is_number_integer())
     {
@@ -492,6 +499,12 @@ json transcribe(json jsonBody)
         // `--carry-initial-prompt`); otherwise it only conditions the first
         // and the decoded text soon pushes it out on long recordings.
         wparams.carry_initial_prompt = params.carry_initial_prompt;
+        // The text the recording continues: steers the first window (style,
+        // language, punctuation), then the decoded text takes its place.
+        // params.context outlives whisper_full(), like params.prompt.
+        if (!params.context.empty()) {
+            wparams.initial_context = params.context.c_str();
+        }
         wparams.suppress_nst = params.suppress_nst;
 
         // params.vad_model outlives whisper_full(), so the pointer stays

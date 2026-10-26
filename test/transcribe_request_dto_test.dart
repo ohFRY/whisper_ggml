@@ -192,5 +192,28 @@ void main() {
       expect(body['carry_initial_prompt'], isTrue);
       expect(body['initial_prompt'], 'Nolwa-Petrine, Yso.');
     });
+
+    test('initial_context is null by default and forwards text', () {
+      final defaultDto = TranscribeRequestDto.fromTranscribeRequest(
+        request(),
+        '/tmp/model.bin',
+      );
+      final defaultBody =
+          json.decode(defaultDto.toRequestString()) as Map<String, dynamic>;
+      expect(defaultBody['initial_context'], isNull);
+
+      final dto = TranscribeRequestDto.fromTranscribeRequest(
+        TranscribeRequest(
+          audio: '/tmp/audio.wav',
+          initialPrompt: 'Nolwa-Petrine, Yso.',
+          carryInitialPrompt: true,
+          initialContext: 'On a marché jusqu’au port de Kervalou.',
+        ),
+        '/tmp/model.bin',
+      );
+      final body = json.decode(dto.toRequestString()) as Map<String, dynamic>;
+      expect(body['initial_context'], 'On a marché jusqu’au port de Kervalou.');
+      expect(body['carry_initial_prompt'], isTrue);
+    });
   });
 }

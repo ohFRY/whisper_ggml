@@ -114,6 +114,9 @@ class WhisperController {
   /// [carryInitialPrompt] keeps [initialPrompt] in front of every 30-second
   /// window, so its vocabulary still applies late in a long recording —
   /// see [TranscribeRequest.carryInitialPrompt].
+  ///
+  /// [initialContext] precedes only the first 30-second window, after the
+  /// carried [initialPrompt] — see [TranscribeRequest.initialContext].
   Future<TranscribeResult?> transcribe({
     required WhisperModel model,
     required String audioPath,
@@ -123,6 +126,7 @@ class WhisperController {
     bool noContext = false,
     int? maxContext,
     bool carryInitialPrompt = false,
+    String? initialContext,
     bool suppressNonSpeechTokens = false,
     bool withSegments = false,
     bool splitOnWord = false,
@@ -151,6 +155,7 @@ class WhisperController {
           noContext: noContext,
           maxContext: maxContext,
           carryInitialPrompt: carryInitialPrompt,
+          initialContext: initialContext,
           suppressNonSpeechTokens: suppressNonSpeechTokens,
           keepModelLoaded: keepModelLoaded,
           vadModelPath: vadModelPath,

@@ -40,6 +40,9 @@ abstract class TranscribeRequestDto
     @JsonKey(name: 'carry_initial_prompt')
     @Default(false)
     bool carryInitialPrompt,
+
+    /// Text before the first 30 s window only (needs carry_initial_prompt).
+    @JsonKey(name: 'initial_context') String? initialContext,
     @JsonKey(name: 'suppress_non_speech_tokens')
     @Default(false)
     bool suppressNonSpeechTokens,
@@ -81,6 +84,7 @@ abstract class TranscribeRequestDto
       noContext: request.noContext,
       maxContext: request.maxContext,
       carryInitialPrompt: request.carryInitialPrompt,
+      initialContext: request.initialContext,
       suppressNonSpeechTokens: request.suppressNonSpeechTokens,
       progressCallback: progressCallbackAddress,
       keepModelLoaded: request.keepModelLoaded,
